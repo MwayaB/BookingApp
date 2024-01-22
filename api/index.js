@@ -118,21 +118,7 @@ app.post('/createbooking', async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   });
-  const deleteBooking = async (bookingId) => {
-    try {
-      const response = await axios.delete(`https://restful-booker.herokuapp.com/booking/${bookingId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
-        }
-      });
-      
-      console.log(`Booking with ID ${bookingId} deleted successfully`);
-      console.log(response.data); // Log the response from the server
-    } catch (error) {
-      console.error(`Error deleting booking with ID ${bookingId}:`, error.message);
-    }
-  };
+
 
 
 app.listen(port, () => {
