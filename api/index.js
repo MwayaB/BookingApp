@@ -18,6 +18,20 @@ app.get('/bookingIds', async (req, res) => {
       }
 });
 
+// Function to authenticate and get the token
+const authenticateAndGetToken = async () => {
+    try {
+      const authResponse = await axios.post('https://restful-booker.herokuapp.com/auth', {
+        username: 'admin',
+        password: 'password123'
+      });
+      return authResponse.data.token;
+    } catch (error) {
+      console.error('Authentication error:', error.message);
+      throw error;
+    }
+  };
+
 
 const localBookingData = [
     {
@@ -59,18 +73,27 @@ const localBookingData = [
 
 // Create a new booking
 app.post('/createbooking', async (req, res) => {
-  const newBooking = req.body;
-  localBookingData.push(newBooking);
-
-  try {
-    // Forward the request to the remote API
-    const response = await axios.post(remoteApiUrl, newBooking);
-    res.status(201).json({ message: 'Booking created successfully', remoteResponse: response.data });
-  } catch (error) {
-    console.error('Error creating booking:', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+    try {
+      // Authenticate and get the token
+      const authToken = await authenticateAndGetToken();
+        console.log(authToken);
+      const newBooking = req.body;
+      localBookingData.push(newBooking);
+  
+      // Forward the request to the remote API with authentication
+      const response = await axios.post(remoteApiUrl, newBooking, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+  
+      res.status(201).json({ message: 'Booking created successfully', remoteResponse: response.data });
+    } catch (error) {
+      console.error('Error creating booking:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });  
 
 
 app.listen(port, () => {
