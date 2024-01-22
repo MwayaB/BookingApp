@@ -62,8 +62,8 @@ const localBookingData = [
     const url = `https://restful-booker.herokuapp.com/booking/${bookingId}`;
   
     try {
-     // const response = await axios.get(url);
-      //console.log(response);
+     const response = await axios.get(url);
+      console.log(response);
       res.json(localBookingData);
     } catch (error) {
       console.error('Error making API call:', error.message);
@@ -108,7 +108,7 @@ app.post('/createbooking', async (req, res) => {
         const response = await axios.delete(`https://restful-booker.herokuapp.com/booking/${bookingId}`, {
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${authToken}`
+              'Authorization': `Basic ${authToken}`
             }
           });
   
